@@ -1,20 +1,21 @@
 import { Button, Form, Spinner } from "react-bootstrap";
 import CustomInput from "./customInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginUser } from "../axios/userAxios";
 import { toast } from "react-toastify";
 
 const initialFormData = {
-  name: "",
   email: "",
+  password: "",
 };
+
 const LoginForm = () => {
   const [formData, setFormData] = useState(initialFormData);
   const { email, password } = formData;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
 
-  // Handle on Change
-
+  // Handle onChange
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,14 +24,21 @@ const LoginForm = () => {
     });
   };
 
-  // Form Submit
+  // useEffect for validity
+  useEffect(() => {
+    if (email.trim() && password.trim()) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [email, password]);
 
-  const handleOnSumbit = async (e) => {
+  // Form Submit
+  const handleOnSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // call axios
-
+    // Call axios
     const result = await loginUser(formData);
 
     setIsSubmitting(false);
@@ -41,8 +49,9 @@ const LoginForm = () => {
     // Success
     toast.success(result.message);
   };
+
   return (
-    <Form onSubmit={handleOnSumbit}>
+    <Form onSubmit={handleOnSubmit}>
       <CustomInput
         label="Email"
         handleOnChange={handleOnChange}
@@ -66,7 +75,11 @@ const LoginForm = () => {
         }}
       />
 
-      <Button variant="primary" type="submit" disabled={isSubmitting}>
+      <Button
+        variant="primary"
+        type="submit"
+        disabled={isSubmitting || isDisabled}
+      >
         {isSubmitting ? (
           <Spinner
             as="span"
