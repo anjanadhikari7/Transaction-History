@@ -3,6 +3,9 @@ import CustomInput from "./customInput";
 import { useEffect, useState } from "react";
 import { loginUser } from "../axios/userAxios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUserAction } from "../redux/user/userAction";
 
 const initialFormData = {
   email: "",
@@ -33,22 +36,27 @@ const LoginForm = () => {
     }
   }, [email, password]);
 
+  // Navigating
+
+  const navigate = useNavigate();
+
+  // Dispatch
+  const dispatch = useDispatch();
+
   // Form Submit
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Call axios
-    const result = await loginUser(formData);
-
-    setIsSubmitting(false);
-    if (result.status === "error") {
-      return toast.error(result.message);
-    }
-
-    // Success
-    toast.success(result.message);
+    dispatch(loginUserAction(formData));
   };
+
+  const { isAuthenticated } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/transaction");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <Form onSubmit={handleOnSubmit}>
