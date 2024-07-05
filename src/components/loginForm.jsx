@@ -15,7 +15,6 @@ const initialFormData = {
 const LoginForm = () => {
   const [formData, setFormData] = useState(initialFormData);
   const { email, password } = formData;
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
 
   // Handle onChange
@@ -46,11 +45,10 @@ const LoginForm = () => {
   // Form Submit
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-
     dispatch(loginUserAction(formData));
   };
 
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, isLoading } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -86,9 +84,9 @@ const LoginForm = () => {
       <Button
         variant="primary"
         type="submit"
-        disabled={isSubmitting || isDisabled}
+        disabled={isLoading || isDisabled}
       >
-        {isSubmitting ? (
+        {isLoading ? (
           <Spinner
             as="span"
             animation="border"

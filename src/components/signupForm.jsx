@@ -3,6 +3,8 @@ import CustomInput from "./customInput";
 import { useState, useEffect } from "react";
 import { createUser } from "../axios/userAxios";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { SignUpUserAction } from "../redux/user/userAction";
 
 const initialFormData = {
   name: "",
@@ -16,7 +18,7 @@ const SignupForm = () => {
   const { name, email, password, confirmPassword } = formData;
   const [isDisabled, setIsDisabled] = useState(true);
   const [isPasswordMatch, setIsPasswordMatch] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isLoading } = useSelector((state) => state.user);
 
   // Handle onChange
   const handleOnChange = (e) => {
@@ -49,24 +51,12 @@ const SignupForm = () => {
     }
   }, [name, email, password, confirmPassword]);
 
+  const dispatch = useDispatch();
+
   // Form Submit
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    // Logic for Signup
-    // Call axios to make API request
-    const result = await createUser(formData);
-
-    setIsSubmitting(false);
-
-    // Error handling
-    if (result.status === "error") {
-      return toast.error(result.message);
-    }
-
-    // Success
-    toast.success(result.message);
+    dispatch(SignUpUserAction(formData));
   };
 
   return (
@@ -130,9 +120,9 @@ const SignupForm = () => {
       <Button
         variant="primary"
         type="submit"
-        disabled={isDisabled || isSubmitting}
+        disabled={isDisabled || isLoading}
       >
-        {isSubmitting ? (
+        {isLoading ? (
           <Spinner
             as="span"
             animation="border"
