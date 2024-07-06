@@ -10,7 +10,26 @@ const API_URL = API_BASE_URL + userEndpoint;
 
 export const createTransaction = (transactionObj) => {
   const response = axios
-    .post(`${API_URL}`, transactionObj)
+    .post(`${API_URL}`, transactionObj, {
+      headers: {
+        Authorization: transactionObj.userId,
+      },
+    })
+    .then((res) => res.data)
+    .catch((error) => console.log(error));
+
+  return response;
+};
+
+// Get all transaction | GET
+
+export const getTransactions = (userId) => {
+  const response = axios
+    .get(API_URL, {
+      headers: {
+        Authorization: userId,
+      },
+    })
     .then((res) => res.data)
     .catch((error) => console.log(error));
 

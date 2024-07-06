@@ -10,7 +10,7 @@ const TransactionPage = () => {
       <TopNavBar userName={user.name} />
 
       {/* Transaction Form */}
-      <TransactionForm />
+      <TransactionForm userId={user._id} />
 
       {/* Transaction Table */}
     </Container>

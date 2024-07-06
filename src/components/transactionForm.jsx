@@ -1,6 +1,8 @@
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import CustomInput from "./customInput";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createTransactionAction } from "../redux/transaction/transactionAction";
 const initialFormData = {
   title: "",
   type: "expense",
@@ -8,9 +10,12 @@ const initialFormData = {
   amount: 0,
 };
 
-const TransactionForm = () => {
-  const [formData, setFormData] = useState(initialFormData);
+const TransactionForm = (props) => {
+  const { userId } = props;
+  const [formData, setFormData] = useState({ ...initialFormData, userId });
   const { title, type, date, amount } = formData;
+
+  const dispatch = useDispatch();
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -25,6 +30,7 @@ const TransactionForm = () => {
     e.preventDefault();
 
     //call createTransactionAction
+    dispatch(createTransactionAction(formData));
   };
 
   return (
